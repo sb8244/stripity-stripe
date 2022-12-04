@@ -1,0 +1,34 @@
+# WARNING: DO NOT EDIT, AUTO-GENERATED CODE!
+
+defmodule <%= context.module_name %> do
+  <%= if String.trim(context.description) != "" do %>
+  @moduledoc """
+<%= context.description %>
+  """
+  <% end %>
+
+  use Stripe.Entity
+  import Stripe.Request
+
+  defstruct <%= inspect(context.attributes) %>
+
+  @plural_endpoint <%= inspect(context.endpoint) %><%= for action <- context.actions do %>
+
+  <%= if String.trim(action.docstring) != "" do %>
+  @doc """
+<%= action.docstring %>
+  """<% end %><%= if action.method == "get" do %>
+  def <%= action.function_name %>(id, opts \\ []) do
+    new_request(opts)
+    |> put_endpoint(@plural_endpoint <> "/#{get_id!(id)}")
+    |> put_method(:get)
+    |> make_request()<% else %>
+  def <%= action.function_name %>(params, opts \\ []) do
+    new_request(opts)
+    |> prefix_expansions()
+    |> put_endpoint(@plural_endpoint)
+    |> put_method(:get)
+    |> put_params(params)
+    |> make_request()<% end %>
+  end<% end %>
+end
